@@ -19,6 +19,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountsServiceTest {
@@ -60,11 +62,32 @@ public class AccountsServiceTest {
 
   }
 
-  @Test
-  public void checkAccountTransfer() throws Exception {
+
+  /*public void checkAccountTransfer() throws Exception {
     log.info("the data is {}",this.transaction.fundTransfer());
     String hi = "Hi";
     assertThat(hi.equals("Hi"));
+  }*/
+
+  @Test
+  public void checAccountTransfer()throws Exception{
+    Account account = new Account("Id-1234");
+    account.setBalance(new BigDecimal( 1000));
+
+    this.accountsService.createAccount(account);
+
+    Account account1 = new Account("Id-5432");
+    account1.setBalance(new BigDecimal(2000));
+
+    this.accountsService.createAccount(account1);
+
+    transaction.fundTransfer("Id-1234","Id-5432",new BigDecimal(2000));
+
+    String hi = "hi";
+
+    assertThat(hi.equals("hi"));
+
+
   }
 
 }

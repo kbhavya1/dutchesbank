@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+
 @Service
 public class AccountTransaction {
 
@@ -21,7 +23,7 @@ public class AccountTransaction {
 
     private static Logger log = LoggerFactory.getLogger(AccountTransaction.class);
 
-    public Account fundTransfer() throws Exception{
+   /* public Account fundTransfer() throws Exception{
 
         Account account = new Account("Id-0522");
         account.setBalance(new BigDecimal(2000));
@@ -33,6 +35,28 @@ public class AccountTransaction {
         log.info("account in data {}",this.repo.getAccount("Id-0522").getBalance());
 
         return this.services.getAccount("Id-0522");
-    }
+    }*/
+
+   public synchronized void fundTransfer(String fromAccount
+           ,String toAccount, BigDecimal amount)throws Exception{
+
+       try{
+
+           BigDecimal amountFrmAccount = this.repo.getAccount(fromAccount).getBalance().subtract(amount);
+
+           this.repo.getAccount(fromAccount).setBalance(amountFrmAccount);
+
+           BigDecimal amountToAccount = this.repo.getAccount(toAccount).getBalance().add(amount);
+
+           this.repo.getAccount(toAccount).setBalance(amountToAccount);
+
+           log.info("from account balance {}",this.repo.getAccount(fromAccount).getBalance());
+           log.info("to account balance {}",this.repo.getAccount(toAccount).getBalance());
+
+       }catch (Exception ex){
+
+       }
+   }
+
 
 }
