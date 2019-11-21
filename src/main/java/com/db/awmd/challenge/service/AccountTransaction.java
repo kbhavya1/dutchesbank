@@ -39,10 +39,16 @@ public class AccountTransaction {
 
    public synchronized void fundTransfer(String fromAccount
            ,String toAccount, BigDecimal amount)throws Exception{
-
        try{
 
            BigDecimal amountFrmAccount = this.repo.getAccount(fromAccount).getBalance().subtract(amount);
+
+           if(amountFrmAccount.compareTo(BigDecimal.ZERO) < 0) {
+
+               log.info("Current account balance {}",this.repo.getAccount(fromAccount).getBalance());
+
+               throw new IllegalArgumentException("Only positive value allowed");
+           }
 
            this.repo.getAccount(fromAccount).setBalance(amountFrmAccount);
 

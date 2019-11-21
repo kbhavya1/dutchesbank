@@ -19,8 +19,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Valid;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountsServiceTest {
@@ -62,32 +60,41 @@ public class AccountsServiceTest {
 
   }
 
+@Test
+ public void checkTransfer(){
 
-  /*public void checkAccountTransfer() throws Exception {
-    log.info("the data is {}",this.transaction.fundTransfer());
-    String hi = "Hi";
-    assertThat(hi.equals("Hi"));
-  }*/
+   Account account = new Account("Id-12345");
+   account.setBalance(new BigDecimal( 10000));
 
-  @Test
-  public void checAccountTransfer()throws Exception{
-    Account account = new Account("Id-1234");
-    account.setBalance(new BigDecimal( 1000));
+   this.accountsService.createAccount(account);
 
-    this.accountsService.createAccount(account);
+   Account account1 = new Account("Id-54321");
+   account1.setBalance(new BigDecimal(2000));
 
-    Account account1 = new Account("Id-5432");
-    account1.setBalance(new BigDecimal(2000));
+   this.accountsService.createAccount(account1);
 
-    this.accountsService.createAccount(account1);
+   Account account2 = new Account("Id-543210");
+   account2.setBalance(new BigDecimal(3000));
 
-    transaction.fundTransfer("Id-1234","Id-5432",new BigDecimal(2000));
+   this.accountsService.createAccount(account2);
 
-    String hi = "hi";
+   Thread t1 = new Thread(()->{
+     try {
+       this.transaction.fundTransfer("Id-12345","Id-54321",new BigDecimal(1000));
+     }catch (Exception ex) {
 
-    assertThat(hi.equals("hi"));
+     }
+   });
 
+   Thread t2 = new Thread(()->{
+     try {
+       this.transaction.fundTransfer("Id-12345","Id-543210",new BigDecimal(1000));
+     }catch (Exception ex){
 
-  }
+     }
+   });
 
+   t1.start();
+   t2.start();
+ }
 }
